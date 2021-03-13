@@ -4,15 +4,16 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Configuration
 public class Config {
@@ -65,8 +66,8 @@ public class Config {
     }
 
     @Bean
-    public RowMapper<Map<String, Object>> getMapper() {
-        return (rs, rowNum) -> {
+    public Function<ResultSet, Map<String, Object>> getMapper() {
+        return rs -> {
             Map<String, Object> map = new HashMap<>();
             try {
                 ResultSetMetaData metaData = rs.getMetaData();

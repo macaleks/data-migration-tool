@@ -20,8 +20,8 @@ public class MigrationApplication {
             migrationService.runMigration();
         };
     }
-    //TODO Extract data in batches
     //TODO Rename project
     //TODO Add project to github
     //TODO Add Placeholder
+    //TODO Extract data in batches: Optional
 }
