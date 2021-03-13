@@ -2,11 +2,12 @@ package com.example.demo;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ConsumerImpl implements Consumer {
 
@@ -17,19 +18,22 @@ public class ConsumerImpl implements Consumer {
     }
 
     @Override
-    public void applyResultSet(String tableName, List<Map<String, Object>> rs) {
-        String sql = buildSqlStatement(tableName, rs);
-        Map<String, Object>[] params = new HashMap[rs.size()];
-        params = rs.toArray(params);
+    public void applyResultSet(String tableName, Stream<Map<String, Object>> rs) {
+        rs.map(m -> {
+            String sql = buildSqlStatement(tableName, m.keySet());
+            Map<String, Object>[] params = new HashMap[1];
+            params = Arrays.asList(m).toArray(params);
 
-        jdbcTemplate.batchUpdate(sql, params);
+            jdbcTemplate.batchUpdate(sql, params);
+            return 1;
+        }).count();
+
     }
 
-    private String buildSqlStatement(String tableName, List<Map<String, Object>> rs) {
+    private String buildSqlStatement(String tableName, Set<String> columnNames) {
         StringBuilder query = new StringBuilder("insert into ");
         query.append(tableName);
         query.append("(");
-        Set<String> columnNames = rs.get(0).keySet();
         query.append(columnNames.stream().collect(Collectors.joining(", ")));
         query.append(")");
         query.append("values(");

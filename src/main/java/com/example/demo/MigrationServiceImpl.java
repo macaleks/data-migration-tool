@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Component
 public class MigrationServiceImpl implements MigrationService {
@@ -21,7 +22,7 @@ public class MigrationServiceImpl implements MigrationService {
     @Override
     public void runMigration() {
         for (String tableName : tables) {
-            List<Map<String, Object>> params = producer.getResultSet(tableName);
+            Stream<Map<String, Object>> params = producer.getResultSet(tableName);
             consumer.applyResultSet(tableName, params);
         }
     }
