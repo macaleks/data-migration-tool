@@ -20,7 +20,4 @@ public class MigrationApplication {
             migrationService.runMigration();
         };
     }
-    //TODO Rename project
-    //TODO Add project to github
-    //TODO Add Placeholder
 }

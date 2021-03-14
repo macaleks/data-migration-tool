@@ -2,8 +2,11 @@ package local.db.migration;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.ResultSet;
@@ -16,6 +19,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Configuration
+@PropertySource(
+        value = {"classpath:datasource.properties"},
+        ignoreResourceNotFound = true
+        )
 public class Config {
 
     @Value("${source.url}")
@@ -121,13 +128,4 @@ public class Config {
         ds.setConnectionProperties("defaultRowPrefetch=1000");
         return ds;
     }
-//    @Bean
-//    public PropertyPlaceholderConfigurer propertyConfigurer() {
-//        PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
-//        Resource resource = new Res
-//        configurer.setLocations(
-//                "classpath:application.properties",
-//                "classpath:datasource.properties"
-//        );
-//    }
 }
