@@ -8,11 +8,11 @@
         <version>2.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
+    <groupId>local.db.migration</groupId>
+    <artifactId>data-migration-tool</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+    <name>data-migration-tool</name>
+    <description>Migrate data between relational databases</description>
 
     <properties>
         <java.version>11</java.version>

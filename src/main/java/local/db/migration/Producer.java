@@ -1,4 +1,4 @@
-package com.example.demo;
+package local.db.migration;
 
 public interface Producer {
 

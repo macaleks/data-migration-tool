@@ -1,4 +1,4 @@
-package com.example.demo;
+package local.db.migration;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,5 +23,4 @@ public class MigrationApplication {
     //TODO Rename project
     //TODO Add project to github
     //TODO Add Placeholder
-    //TODO Extract data in batches: Optional
 }

@@ -1,4 +1,4 @@
-package com.example.demo;
+package local.db.migration;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.example.demo;
+package local.db.migration;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Value;
