@@ -7,9 +7,9 @@ import java.util.List;
 @Component
 public class MigrationServiceImpl implements MigrationService {
 
-    private Producer producer;
-    private Consumer consumer;
-    private List<String> tables;
+    private final Producer producer;
+    private final Consumer consumer;
+    private final List<String> tables;
 
     public MigrationServiceImpl(Producer producer, Consumer consumer, List<String> tables) {
         this.producer = producer;

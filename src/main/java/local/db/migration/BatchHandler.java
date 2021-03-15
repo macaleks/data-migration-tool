@@ -15,6 +15,7 @@ public class BatchHandler implements RowCallbackHandler {
     private final Function<ResultSet, Map<String, Object>> mapper;
     private final Consumer consumer;
     private final String tableName;
+    private int count = 0;
 
     private List<Map<String, Object>> buffer;
 
@@ -39,10 +40,12 @@ public class BatchHandler implements RowCallbackHandler {
         }
     }
 
-    public final void flush() {
+    public final int flush() {
         if (buffer.size() > 0) {
             consumer.applyResultSet(tableName, buffer);
+            count += buffer.size();
             buffer = new ArrayList<>(threshold);
         }
+        return count;
     }
 }

@@ -1,28 +1,26 @@
 package local.db.migration;
 
+import oracle.sql.TIMESTAMP;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Configuration
 @PropertySource(
         value = {"classpath:datasource.properties"},
         ignoreResourceNotFound = true
-        )
+)
 public class Config {
 
     @Value("${source.url}")
@@ -81,6 +79,8 @@ public class Config {
                 int columnCount = 0;
                 columnCount = metaData.getColumnCount();
                 for (int i = 1; i <= columnCount; i++) {
+                    Object fieldValue = convertIfTIMESTAMP(rs.getObject(i));
+                    fieldValue = convertSpecialCharacterToNull(fieldValue);
                     map.put(metaData.getColumnName(i), rs.getObject(i));
                 }
             } catch (SQLException e) {
@@ -90,9 +90,27 @@ public class Config {
         };
     }
 
+    private Object convertSpecialCharacterToNull(Object object) {
+        if (object instanceof String && object.equals("\u0000")) {
+            object = null;
+        }
+        return object;
+    }
+
+    private Object convertIfTIMESTAMP(Object object) throws SQLException {
+        if (object instanceof TIMESTAMP) {
+            TIMESTAMP ts = (TIMESTAMP) object;
+            Date date = new Date(ts.timestampValue().getTime());
+            return date;
+        }
+        return object;
+    }
+
     @Bean
-    public Producer producer() {
-        return new ProducerImpl(sourceJdbcTemplate(), getMapper());
+    public Producer producer(@Value("${source.threshold}") int threshold) {
+        ProducerImpl producer = new ProducerImpl(sourceJdbcTemplate(), getMapper());
+        producer.setThreshold(threshold);
+        return producer;
     }
 
     @Bean
@@ -123,9 +141,16 @@ public class Config {
         ds.setTestOnBorrow(true);
         ds.setTestWhileIdle(true);
         ds.setIgnoreExceptionOnPreLoad(true);
-        ds.setDefaultAutoCommit(true);
+        ds.setDefaultAutoCommit(false);
 
         ds.setConnectionProperties("defaultRowPrefetch=1000");
         return ds;
     }
+
+    @Bean
+    public TransactionManager transactionManager() {
+        TransactionManager transactionManager = new DataSourceTransactionManager(target());
+        return transactionManager;
+    }
+
 }

@@ -1,6 +1,7 @@
 package local.db.migration;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,13 @@ import java.util.stream.Collectors;
 
 public class ConsumerImpl implements Consumer {
 
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public ConsumerImpl(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Transactional
     @Override
     public void applyResultSet(String tableName, List<Map<String, Object>> rs) {
         String sql = buildSqlStatement(tableName, rs);
